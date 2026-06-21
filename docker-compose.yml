@@ -1,0 +1,65 @@
+name: campuscare-auth
+
+services:
+  auth-service:
+    container_name: campuscare-auth-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    depends_on:
+      auth-postgres:
+        condition: service_healthy
+      auth-redis:
+        condition: service_healthy
+    networks:
+      - campuscare-net
+    restart: unless-stopped
+
+  auth-postgres:
+    container_name: campuscare-auth-postgres
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: db_auth_service
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - campuscare-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d db_auth_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  auth-redis:
+    container_name: campuscare-auth-redis
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6380:6379"
+    volumes:
+      - auth_redis_data:/data
+    networks:
+      - campuscare-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  auth_postgres_data:
+  auth_redis_data:
+
+networks:
+  campuscare-net:
+    external: true

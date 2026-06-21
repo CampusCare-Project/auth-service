@@ -1,0 +1,22 @@
+
+DATABASE_URL="postgresql://postgres:123@localhost:5432/db_auth_service"
+PORT=3000
+BASE_URL="http://localhost:3000"
+REDIS_URL="redis://127.0.0.1:6379"
+TokenExpired="36000" #one hour
+JWT_SECRET="super secret key"
+ENABLE_REGISTER=false
+
+
+#Login
+# Time Pause RateLimit
+login_windowsSec=20 
+#max request per WindowsSec
+login_max=10 
+#its...prefix
+login_keyPrefix="rl:login" 
+
+#logout
+logout_windowsSec=10
+logout_max=10
+logout_keyPrefix="rl:logout"
