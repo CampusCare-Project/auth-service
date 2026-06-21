@@ -46,7 +46,7 @@ export class AuthService {
     passwordHash: string;
   }) {
           return prisma.$transaction(async(tx:any) => {
-            const username = await tx.user.findunique({
+            const username = await tx.user.findUnique({
               where:{username:data.username}
             })
         if(username){throw new Error(`username ${username} sudah ada, coba yang lain` )}
