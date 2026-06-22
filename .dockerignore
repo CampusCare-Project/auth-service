@@ -8,3 +8,6 @@ coverage
 Dockerfile
 docker-compose.yml
 *.log
+*.md
+dist
+.DS_Store

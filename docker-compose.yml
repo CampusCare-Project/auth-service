@@ -1,13 +1,13 @@
-name: campuscare-auth
+version: "3.9"
 
 services:
   auth-service:
-    container_name: campuscare-auth-service
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env
+    container_name: auth-service
+    restart: unless-stopped
+    env_file: .env
     ports:
       - "3000:3000"
     depends_on:
@@ -15,51 +15,61 @@ services:
         condition: service_healthy
       auth-redis:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     networks:
-      - campuscare-net
-    restart: unless-stopped
+      - auth_net
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: bunx prisma migrate deploy
+    env_file: .env
+    restart: "no"
+    depends_on:
+      auth-postgres:
+        condition: service_healthy
+    networks:
+      - auth_net
 
   auth-postgres:
-    container_name: campuscare-auth-postgres
     image: postgres:16-alpine
+    container_name: auth-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
+      POSTGRES_PASSWORD: "123"
       POSTGRES_DB: db_auth_service
-    ports:
-      - "5433:5432"
     volumes:
-      - auth_postgres_data:/var/lib/postgresql/data
-    networks:
-      - campuscare-net
+      - auth_pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d db_auth_service"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 10
-    restart: unless-stopped
+      retries: 5
+    networks:
+      - auth_net
 
   auth-redis:
-    container_name: campuscare-auth-redis
     image: redis:7-alpine
-    command: ["redis-server", "--appendonly", "yes"]
-    ports:
-      - "6380:6379"
+    container_name: auth-redis
+    restart: unless-stopped
     volumes:
       - auth_redis_data:/data
-    networks:
-      - campuscare-net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
+      interval: 10s
       timeout: 5s
-      retries: 10
-    restart: unless-stopped
+      retries: 5
+    networks:
+      - auth_net
 
 volumes:
-  auth_postgres_data:
+  auth_pg_data:
   auth_redis_data:
 
 networks:
-  campuscare-net:
-    external: true
+  auth_net:
+    name: auth_net  
+    driver: bridge
