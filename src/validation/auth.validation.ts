@@ -14,7 +14,7 @@ export const registerSchema = z.object({
   name: z
     .string()
     .min(1, 'username minimal 6 karakter')
-    .max(20, 'username maksimal 20 karakter'),
+    .max(100, 'username maksimal 100 karakter'),
   email:z
   .string()
   .min(1,"email tidak boleh kosong")
@@ -22,7 +22,7 @@ export const registerSchema = z.object({
   username: z
     .string()
     .min(1, 'username minimal 6 karakter')
-    .max(20, 'username maksimal 20 karakter'),
+    .max(100, 'username maksimal 100 karakter'),
 
   passwordHash: z.string().min(6, 'Password minimal 6 karakter'),
 });
@@ -32,7 +32,7 @@ export const addUsersSchema = z.object({
   name: z
     .string()
     .min(1, 'username minimal 6 karakter')
-    .max(20, 'username maksimal 20 karakter'),
+    .max(100, 'username maksimal 100 karakter'),
   email:z
   .string()
   .min(1,"email tidak boleh kosong")
@@ -40,7 +40,7 @@ export const addUsersSchema = z.object({
   username: z
     .string()
     .min(1, 'username minimal 6 karakter')
-    .max(20, 'username maksimal 20 karakter'),
+    .max(100, 'username maksimal 100 karakter'),
 
   passwordHash: z.string().min(6, 'Password minimal 6 karakter'),
   role:z.enum(["TECHNICIAN","STAFF","STUDENT"], "Tidak bisa tambahkan role admin")

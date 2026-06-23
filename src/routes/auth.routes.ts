@@ -44,13 +44,13 @@ auth.get(
 );
 
 auth.post(
-  '/addusers',
+  "/addusers",
   authMiddleware,
   requireRole("ADMIN"),
   rateLimit({
-    windowSec:Number(process.env.login_windowsSec),
-    max:Number(process.env.login_max),
-    keyPrefix:process.env.login_keyPrefix
+    windowSec: Number(process.env.add_user_windowsSec || 60),
+    max: Number(process.env.add_user_max || 50),
+    keyPrefix: process.env.add_user_keyPrefix || "add_user",
   }),
   AuthController.addUsers
 );

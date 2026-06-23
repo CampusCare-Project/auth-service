@@ -7,6 +7,9 @@ TokenExpired="36000" #one hour
 JWT_SECRET="super secret key"
 ENABLE_REGISTER=false
 
+add_user_windowsSec=60
+add_user_max=100
+add_user_keyPrefix=add_user
 
 #Login
 # Time Pause RateLimit

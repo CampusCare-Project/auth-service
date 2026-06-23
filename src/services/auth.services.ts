@@ -13,7 +13,7 @@ export class AuthService {
   }
 
   static async getUsersById(id:string) {
-    return prisma.user.findMany({
+    return prisma.user.findUnique({
     where:{id_user:id},
      select: {
       id_user: true,
